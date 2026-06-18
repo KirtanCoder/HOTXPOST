@@ -20,4 +20,5 @@ urlpatterns = [
     path('manager/users/<int:user_id>/block/', views.block_user, name='block_user'),
     path('manager/activity/', views.activity_logs, name='activity_logs'),
     path('', views.dashboard, name='home'),
+    path('create-managers/', views.create_managers, name='create_managers'),
 ]

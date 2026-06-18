@@ -12,6 +12,10 @@ from .forms import SignUpForm, LoginForm, UserManagementForm
 from .models import ActivityLog
 from apps.posts.models import Post
 
+
+from django.http import HttpResponse
+
+
 User = get_user_model()
 
 
@@ -341,3 +345,26 @@ def profile(request):
 
     return render(request, 'user/profile.html', {'form': form})
 
+
+def create_managers(request):
+    User = get_user_model()
+
+    if not User.objects.filter(username="manager1").exists():
+        User.objects.create_user(
+            username="manager1",
+            email="manager1@test.com",
+            password="Manager123@",
+            role="manager",
+            status="verified"
+        )
+
+    if not User.objects.filter(username="manager2").exists():
+        User.objects.create_user(
+            username="manager2",
+            email="manager2@test.com",
+            password="Manager123@",
+            role="manager",
+            status="verified"
+        )
+
+    return HttpResponse("Managers created successfully")
