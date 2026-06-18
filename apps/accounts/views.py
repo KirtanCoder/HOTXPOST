@@ -13,6 +13,7 @@ from .models import ActivityLog
 from apps.posts.models import Post
 
 
+
 from django.http import HttpResponse
 
 
@@ -346,28 +347,3 @@ def profile(request):
     return render(request, 'user/profile.html', {'form': form})
 
 
-
-def create_managers(request):
-    User = get_user_model()
-
-    if not User.objects.filter(email="manager1@gmail.com").exists():
-        user1 = User.objects.create_user(
-            email="manager1@gmail.com",
-            username="manager1",
-            password="Manager123@"
-        )
-        user1.role = "manager"
-        user1.status = "verified"
-        user1.save()
-
-    if not User.objects.filter(email="manager2@gmail.com").exists():
-        user2 = User.objects.create_user(
-            email="manager2@gmail.com",
-            username="manager2",
-            password="Manager123@"
-        )
-        user2.role = "manager"
-        user2.status = "verified"
-        user2.save()
-
-    return HttpResponse("Managers created successfully")
