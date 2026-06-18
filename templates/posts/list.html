@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Available Posts - HOTXPOST{% endblock %}
+
+{% block content %}
+<div class="posts-page">
+    <div class="page-header">
+        <h1>Available Posts</h1>
+        <p>Browse and claim available tasks</p>
+    </div>
+
+    {% if posts %}
+    <div class="posts-grid">
+        {% for post in posts %}
+        <div class="post-card-grid">
+            <div class="post-card-header">
+                <h3>{{ post.title }}</h3>
+                <span class="post-status available">Available</span>
+            </div>
+
+            <p class="community">{{ post.community }}</p>
+
+            <p class="comment-preview">{{ post.comment_text|truncatewords:15 }}</p>
+
+            {% if post.images.all %}
+            <div class="post-images-preview">
+                {% for image in post.images.all|slice:":2" %}
+                <img src="{{ image.image_url }}" alt="Post image" class="post-image">
+                {% endfor %}
+                {% if post.images.count > 2 %}
+                <div class="image-count">+{{ post.images.count|add:"-2" }}</div>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <div class="hashtags">
+                {% for tag in post.get_hashtags_list|slice:":3" %}
+                <span class="hashtag">{{ tag }}</span>
+                {% endfor %}
+                {% if post.get_hashtags_list|length > 3 %}
+                <span class="hashtag-more">+{{ post.get_hashtags_list|length|add:"-3" }}</span>
+                {% endif %}
+            </div>
+
+            <div class="post-actions">
+                <a href="{% url 'posts:detail' post.id %}" class="btn btn-primary btn-block">
+                    <i class="fas fa-eye"></i> View Details
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-inbox"></i>
+        <h2>No Available Posts</h2>
+        <p>Check back soon for new tasks!</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Manage Users - HOTXPOST{% endblock %}
+
+{% block content %}
+<div class="manage-users-page">
+    <div class="page-header">
+        <h1>Manage Users</h1>
+        <p>View and manage all users</p>
+    </div>
+
+    <div class="filters">
+        <form method="GET" class="filter-form">
+            <div class="filter-group">
+                <input type="text" name="search" placeholder="Search users..." value="{{ search_query }}" class="form-control">
+            </div>
+            <div class="filter-group">
+                <select name="status" class="form-control">
+                    <option value="">All Statuses</option>
+                    <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending</option>
+                    <option value="verified" {% if status_filter == 'verified' %}selected{% endif %}>Verified</option>
+                    <option value="rejected" {% if status_filter == 'rejected' %}selected{% endif %}>Rejected</option>
+                    <option value="blocked" {% if status_filter == 'blocked' %}selected{% endif %}>Blocked</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Filter</button>
+        </form>
+    </div>
+
+    {% if users %}
+    <div class="users-table-container">
+        <table class="users-table">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th>Joined</th>
+                    <th>Online</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>
+                        <strong>{{ user.username }}</strong>
+                    </td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.first_name }} {{ user.last_name }}</td>
+                    <td>
+                        <span class="status-badge {% if user.status == 'verified' %}verified{% else %}{{ user.status }}{% endif %}">
+                            {{ user.get_status_display }}
+                        </span>
+                    </td>
+                    <td>{{ user.created_at|date:"M d, Y" }}</td>
+                    <td>
+                        <span class="online-status {% if user.is_online %}online{% else %}offline{% endif %}">
+                            {% if user.is_online %}<i class="fas fa-circle"></i> Online{% else %}<i class="fas fa-circle"></i> Offline{% endif %}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            {% if user.status == 'pending' %}
+                            <form method="POST" action="{% url 'accounts:verify_user' user.id %}" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-success" title="Verify">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            </form>
+                            <form method="POST" action="{% url 'accounts:reject_user' user.id %}" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-danger" title="Reject">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </form>
+                            {% endif %}
+
+                            {% if user.status != 'blocked' %}
+                            <form method="POST" action="{% url 'accounts:block_user' user.id %}" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-warning" title="Block">
+                                    <i class="fas fa-ban"></i>
+                                </button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-inbox"></i>
+        <h2>No Users Found</h2>
+        <p>Try adjusting your filters</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

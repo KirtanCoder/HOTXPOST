@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Activity Logs - HOTXPOST{% endblock %}
+
+{% block content %}
+<div class="activity-logs-page">
+    <div class="page-header">
+        <h1>System Activity Logs</h1>
+        <p>Monitor all system activities</p>
+    </div>
+
+    <div class="filters">
+        <form method="GET" class="filter-form">
+            <div class="filter-group">
+                <select name="action" class="form-control">
+                    <option value="">All Actions</option>
+                    <option value="signup" {% if action_filter == 'signup' %}selected{% endif %}>User Signup</option>
+                    <option value="login" {% if action_filter == 'login' %}selected{% endif %}>User Login</option>
+                    <option value="logout" {% if action_filter == 'logout' %}selected{% endif %}>User Logout</option>
+                    <option value="verify" {% if action_filter == 'verify' %}selected{% endif %}>User Verified</option>
+                    <option value="reject" {% if action_filter == 'reject' %}selected{% endif %}>User Rejected</option>
+                    <option value="block" {% if action_filter == 'block' %}selected{% endif %}>User Blocked</option>
+                    <option value="post_create" {% if action_filter == 'post_create' %}selected{% endif %}>Post Created</option>
+                    <option value="post_edit" {% if action_filter == 'post_edit' %}selected{% endif %}>Post Edited</option>
+                    <option value="post_delete" {% if action_filter == 'post_delete' %}selected{% endif %}>Post Deleted</option>
+                    <option value="post_claim" {% if action_filter == 'post_claim' %}selected{% endif %}>Post Claimed</option>
+                    <option value="post_complete" {% if action_filter == 'post_complete' %}selected{% endif %}>Post Completed</option>
+                    <option value="post_approve" {% if action_filter == 'post_approve' %}selected{% endif %}>Post Approved</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Filter</button>
+        </form>
+    </div>
+
+    {% if logs %}
+    <div class="logs-table-container">
+        <table class="logs-table">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Action</th>
+                    <th>Details</th>
+                    <th>Timestamp</th>
+                    <th>IP Address</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                <tr>
+                    <td>
+                        <strong>{{ log.user.username }}</strong>
+                    </td>
+                    <td>
+                        <span class="action-badge">{{ log.get_action_display }}</span>
+                    </td>
+                    <td>{{ log.details|truncatewords:10 }}</td>
+                    <td>{{ log.timestamp|date:"M d, Y H:i" }}</td>
+                    <td><code>{{ log.ip_address }}</code></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-inbox"></i>
+        <h2>No Activity Logs</h2>
+        <p>No activity logs found for the selected filter</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

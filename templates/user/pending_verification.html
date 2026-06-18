@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Pending Verification - HOTXPOST{% endblock %}
+
+{% block content %}
+<div class="verification-container">
+    <div class="verification-box">
+        <div class="verification-icon">
+            <i class="fas fa-hourglass-half"></i>
+        </div>
+        <h1>Account Pending Verification</h1>
+        <p>Your account is waiting for manager verification.</p>
+        <p class="status-text">Status: <strong>{{ user.get_status_display }}</strong></p>
+
+        <div class="account-info">
+            <p><strong>Username:</strong> {{ user.username }}</p>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+            <p><strong>Registered:</strong> {{ user.created_at|date:"F j, Y" }}</p>
+        </div>
+
+        <p class="info-text">
+            <i class="fas fa-info-circle"></i>
+            A manager will review your account and verify you soon. Once verified, you'll be able to claim and complete tasks.
+        </p>
+
+        <div class="action-buttons">
+            <a href="{% url 'accounts:profile' %}" class="btn btn-primary">
+                <i class="fas fa-user"></i> View Profile
+            </a>
+            <form method="POST" action="{% url 'accounts:logout' %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-secondary">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

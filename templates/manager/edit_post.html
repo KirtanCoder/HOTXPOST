@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Edit Post - HOTXPOST{% endblock %}
+
+{% block content %}
+<div class="post-form-page">
+    <div class="page-header">
+        <h1>Edit Post</h1>
+        <p>Update post information</p>
+    </div>
+
+    <div class="post-form-container">
+        <form method="POST" enctype="multipart/form-data" class="post-form">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="{{ form.title.id_for_label }}">Post Title *</label>
+                {{ form.title }}
+                {% if form.title.errors %}
+                <div class="error-message">{{ form.title.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="{{ form.community.id_for_label }}">Community Name *</label>
+                    {{ form.community }}
+                    {% if form.community.errors %}
+                    <div class="error-message">{{ form.community.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.twitter_link.id_for_label }}">Twitter/X Link *</label>
+                    {{ form.twitter_link }}
+                    {% if form.twitter_link.errors %}
+                    <div class="error-message">{{ form.twitter_link.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.comment_text.id_for_label }}">Comment Text *</label>
+                {{ form.comment_text }}
+                {% if form.comment_text.errors %}
+                <div class="error-message">{{ form.comment_text.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.hashtags.id_for_label }}">Hashtags *</label>
+                {{ form.hashtags }}
+                <small>Separate hashtags with commas</small>
+                {% if form.hashtags.errors %}
+                <div class="error-message">{{ form.hashtags.errors }}</div>
+                {% endif %}
+            </div>
+
+            {% if images %}
+            <div class="form-group">
+                <label>Current Images</label>
+                <div class="images-grid">
+                    {% for image in images %}
+                    <div class="image-item">
+                        <img src="{{ image.image_url }}" alt="Post image">
+                        <form method="POST" action="{% url 'posts:delete_image' image.id %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-danger" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="form-group">
+                <label for="{{ form.images.id_for_label }}">Add New Images</label>
+                {{ form.images }}
+                <small>Upload additional images for this post</small>
+                {% if form.images.errors %}
+                <div class="error-message">{{ form.images.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="fas fa-save"></i> Update Post
+                </button>
+                <form method="POST" action="{% url 'posts:delete' post.id %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-lg" onclick="return confirm('Are you sure you want to delete this post?');">
+                        <i class="fas fa-trash"></i> Delete Post
+                    </button>
+                </form>
+                <a href="{% url 'accounts:manager_dashboard' %}" class="btn btn-secondary btn-lg">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

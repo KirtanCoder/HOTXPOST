@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ post.title }} - HOTXPOST{% endblock %}
+
+{% block content %}
+<div class="post-detail-page">
+    <div class="post-detail-container">
+        <div class="post-detail-header">
+            <div>
+                <h1>{{ post.title }}</h1>
+                <p class="community">{{ post.community }}</p>
+                <span class="post-status {{ post.status }}">{{ post.get_status_display }}</span>
+            </div>
+        </div>
+
+        <div class="post-detail-content">
+            <div class="post-main">
+                {% if images %}
+                <div class="post-images-detail">
+                    {% for image in images %}
+                    <img src="{{ image.image_url }}" alt="Post image" class="post-image-full">
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <div class="post-section">
+                    <h3>Comment Text</h3>
+                    <p class="comment-text">{{ post.comment_text }}</p>
+                    <button class="btn btn-secondary btn-sm" onclick="copyToClipboard('{{ post.comment_text|escapejs }}')">
+                        <i class="fas fa-copy"></i> Copy Comment
+                    </button>
+                </div>
+
+                <div class="post-section">
+                    <h3>Hashtags</h3>
+                    <div class="hashtags-large">
+                        {% for tag in post.get_hashtags_list %}
+                        <span class="hashtag">{{ tag }}</span>
+                        {% endfor %}
+                    </div>
+                    <button class="btn btn-secondary btn-sm" onclick="copyToClipboard('{{ post.hashtags|escapejs }}')">
+                        <i class="fas fa-copy"></i> Copy Hashtags
+                    </button>
+                </div>
+
+                <div class="post-section">
+                    <h3>Twitter Link</h3>
+                    <a href="{{ post.twitter_link }}" target="_blank" class="btn btn-primary btn-lg">
+                        <i class="fas fa-external-link-alt"></i> Open on Twitter
+                    </a>
+                </div>
+
+                <div class="post-metadata">
+                    <p><strong>Created:</strong> {{ post.created_at|date:"F j, Y H:i" }}</p>
+                    {% if post.claimed_by %}
+                    <p><strong>Claimed by:</strong> {{ post.claimed_by.username }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="post-sidebar">
+                <div class="action-card">
+                    {% if can_claim %}
+                    <h3>Claim This Post</h3>
+                    <p>Click below to claim this post and start working on it.</p>
+                    <form method="POST" action="{% url 'posts:claim' post.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success btn-block">
+                            <i class="fas fa-hand-paper"></i> Claim Post
+                        </button>
+                    </form>
+                    {% elif can_complete %}
+                    <h3>Mark Complete</h3>
+                    <p>You've claimed this post. Mark it as complete when done.</p>
+                    <form method="POST" action="{% url 'posts:complete' post.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success btn-block">
+                            <i class="fas fa-check"></i> Mark Complete
+                        </button>
+                    </form>
+                    {% elif can_approve %}
+                    <h3>Approve Post</h3>
+                    <p>This post is completed and waiting for approval.</p>
+                    <form method="POST" action="{% url 'posts:approve' post.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success btn-block">
+                            <i class="fas fa-thumbs-up"></i> Approve Post
+                        </button>
+                    </form>
+                    {% else %}
+                    <h3>Status</h3>
+                    <p class="status-message">
+                        {% if post.is_deleted %}
+                            This post has been deleted.
+                        {% elif post.status == 'claimed' %}
+                            This post has been claimed by {{ post.claimed_by.username }}.
+                        {% elif post.status == 'completed' %}
+                            This post is waiting for manager approval.
+                        {% elif post.status == 'approved' %}
+                            This post has been approved.
+                        {% endif %}
+                    </p>
+                    <a href="{% url 'posts:list' %}" class="btn btn-secondary btn-block">
+                        <i class="fas fa-arrow-left"></i> Back to Posts
+                    </a>
+                    {% endif %}
+                </div>
+
+                <div class="info-card">
+                    <h4>Post Information</h4>
+                    <p><strong>Status:</strong> {{ post.get_status_display }}</p>
+                    <p><strong>Created:</strong> {{ post.created_at|timesince }} ago</p>
+                    {% if post.claimed_by %}
+                    <p><strong>Claimed by:</strong> {{ post.claimed_by.username }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        alert('Copied to clipboard!');
+    });
+}
+</script>
+{% endblock %}

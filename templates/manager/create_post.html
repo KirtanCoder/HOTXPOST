@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Create Post - HOTXPOST{% endblock %}
+
+{% block content %}
+<div class="post-form-page">
+    <div class="page-header">
+        <h1>Create New Post</h1>
+        <p>Add a new task for users to complete</p>
+    </div>
+
+    <div class="post-form-container">
+        <form method="POST" enctype="multipart/form-data" class="post-form">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="{{ form.title.id_for_label }}">Post Title *</label>
+                {{ form.title }}
+                {% if form.title.errors %}
+                <div class="error-message">{{ form.title.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="{{ form.community.id_for_label }}">Community Name *</label>
+                    {{ form.community }}
+                    {% if form.community.errors %}
+                    <div class="error-message">{{ form.community.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.twitter_link.id_for_label }}">Twitter/X Link *</label>
+                    {{ form.twitter_link }}
+                    {% if form.twitter_link.errors %}
+                    <div class="error-message">{{ form.twitter_link.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.comment_text.id_for_label }}">Comment Text *</label>
+                {{ form.comment_text }}
+                <small>The text users should post as a comment</small>
+                {% if form.comment_text.errors %}
+                <div class="error-message">{{ form.comment_text.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.hashtags.id_for_label }}">Hashtags *</label>
+                {{ form.hashtags }}
+                <small>Separate hashtags with commas (e.g., #twitter, #task, #manager)</small>
+                {% if form.hashtags.errors %}
+                <div class="error-message">{{ form.hashtags.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.images.id_for_label }}">Images</label>
+                {{ form.images }}
+                <small>Upload images related to this post</small>
+                {% if form.images.errors %}
+                <div class="error-message">{{ form.images.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="fas fa-save"></i> Create Post
+                </button>
+                <a href="{% url 'accounts:manager_dashboard' %}" class="btn btn-secondary btn-lg">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Profile - HOTXPOST{% endblock %}
+
+{% block content %}
+<div class="profile-page">
+    <div class="page-header">
+        <h1>My Profile</h1>
+    </div>
+
+    <div class="profile-container">
+        <div class="profile-card">
+            <div class="profile-header">
+                <div class="avatar-large">{{ user.first_name|first }}</div>
+                <div class="profile-info">
+                    <h2>{{ user.first_name }} {{ user.last_name }}</h2>
+                    <p class="username">@{{ user.username }}</p>
+                    <span class="role-badge {{ user.role }}">{{ user.get_role_display }}</span>
+                </div>
+            </div>
+
+            <div class="profile-details">
+                <div class="detail-item">
+                    <label>Email</label>
+                    <p>{{ user.email }}</p>
+                </div>
+                <div class="detail-item">
+                    <label>Status</label>
+                    <p><span class="status-badge {% if user.status == 'verified' %}verified{% else %}{{ user.status }}{% endif %}">
+                        {{ user.get_status_display }}
+                    </span></p>
+                </div>
+                <div class="detail-item">
+                    <label>Member Since</label>
+                    <p>{{ user.created_at|date:"F j, Y" }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-edit">
+            <h3>Edit Profile</h3>
+            <form method="POST" class="profile-form">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="{{ form.first_name.id_for_label }}">First Name</label>
+                    {{ form.first_name }}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.last_name.id_for_label }}">Last Name</label>
+                    {{ form.last_name }}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.discord_username.id_for_label }}">Discord Username</label>
+                    {{ form.discord_username }}
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
